@@ -53,7 +53,9 @@ const UpdateButton: React.FC<{ puuid: string }> = ({ puuid }) => {
 
   return (
     <button
-      onClick={void updateSummoner}
+      onClick={() => {
+        void updateSummoner();
+      }}
       className={`relative flex items-center justify-center rounded-sm border border-zinc-950 px-2 py-1 text-base font-medium text-zinc-900 ${
         loading ? "cursor-default bg-violet-700" : "bg-violet-500"
       }`}
