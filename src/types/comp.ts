@@ -15,6 +15,8 @@ const UnitSchema = z.object({
   items: z.array(z.string()),
 });
 
+export type Unit = z.infer<typeof UnitSchema>;
+
 const ParticipantSchema = z.object({
   region: InternalRegionSchema,
   name: z.string(),
