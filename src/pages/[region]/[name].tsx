@@ -7,7 +7,7 @@ import { RegionSchema, regionToInternalRegion } from "~/types/region";
 import { type Summoner, SummonerSchema } from "~/types/summoner";
 import ProfileHeader from "~/components/profileHeader";
 import RankCard from "~/components/rankCard";
-import { Comp, CompSchema } from "~/types/comp";
+import { type Comp, CompSchema } from "~/types/comp";
 import CompCard from "~/components/compCard";
 
 const QuerySchema = z.object({
@@ -77,7 +77,9 @@ const ProfilePage: NextPage<{ summoner: Summoner; comps: Comp[] }> = ({
         </div>
         <ul className="flex flex-col gap-2">
           {comps.map((c) => (
-            <CompCard comp={c} />
+            <li key={c.match.id}>
+              <CompCard comp={c} />
+            </li>
           ))}
         </ul>
       </main>

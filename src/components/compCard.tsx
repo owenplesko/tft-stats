@@ -1,4 +1,4 @@
-import { Comp } from "~/types/comp";
+import type { Comp } from "~/types/comp";
 import {
   formatDuration,
   formatPlacement,
@@ -9,10 +9,7 @@ import Image from "next/image";
 
 const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
   return (
-    <li
-      key={comp.match.id}
-      className="relative flex w-[1000px] flex-row items-center gap-4 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4"
-    >
+    <div className="relative flex w-[1000px] flex-row items-center gap-4 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
       <div
         className={`absolute left-0 top-0 h-full w-1 self-stretch shadow-sm ${
           comp.placement <= 4 ? "bg-violet-500" : "bg-zinc-500"
@@ -52,7 +49,7 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
       </div>
       <ul className="flex flex-col justify-evenly">
         {comp.augments.map((augment) => (
-          <li>
+          <li key={augment}>
             <Image
               className="rounded-sm border border-zinc-900"
               src={`/augment/${augment}.png`}
@@ -63,7 +60,7 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
           </li>
         ))}
       </ul>
-    </li>
+    </div>
   );
 };
 

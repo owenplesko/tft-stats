@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Rank } from "~/types/rank";
+import type { Rank } from "~/types/rank";
 import { formatRank } from "~/util/stringFormatting";
 
 const RankCard: React.FC<{ rank: Rank | null }> = ({ rank }) => {
