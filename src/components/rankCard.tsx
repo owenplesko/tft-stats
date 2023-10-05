@@ -9,7 +9,7 @@ const RankCard: React.FC<{ rank: Rank | null }> = ({ rank }) => {
         <>
           <Image
             className="mr-auto"
-            src={`/rank/${rank.tier}.png`}
+            src={`/rank/${rank.tier.toLowerCase()}.png`}
             width={96}
             height={96}
             alt={rank.tier}
