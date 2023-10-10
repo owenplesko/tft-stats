@@ -8,6 +8,8 @@ const TraitSchema = z.object({
   tier_max: z.number(),
 });
 
+export type Trait = z.infer<typeof TraitSchema>;
+
 const UnitSchema = z.object({
   character_id: z.string(),
   rarity: z.number(),

@@ -1,4 +1,4 @@
-import type { Comp, Unit } from "~/types/comp";
+import type { Comp, Trait, Unit } from "~/types/comp";
 import {
   formatDuration,
   formatPlacement,
@@ -8,6 +8,7 @@ import {
 import Image from "next/image";
 import { AiFillStar } from "react-icons/ai";
 import { PiCaretDown } from "react-icons/pi";
+import TraitIcon from "./TraitIcon";
 
 const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
   return (
@@ -19,7 +20,7 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
             : comp.placement === 2
             ? "bg-yellow-400"
             : comp.placement === 3
-            ? "bg-zinc-300"
+            ? "bg-slate-300"
             : comp.placement === 4
             ? "bg-yellow-800"
             : "bg-zinc-700"
@@ -57,7 +58,7 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
           {comp.level}
         </span>
       </div>
-      <ul className="flex flex-col justify-evenly self-stretch">
+      <ul className="flex flex-col justify-between self-stretch">
         {comp.augments.map((augment) => (
           <li key={augment}>
             <Image
@@ -70,13 +71,24 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
           </li>
         ))}
       </ul>
-      <ul className="flex flex-row gap-2">
-        {comp.units.map((u, i) => (
-          <li key={i}>
-            <UnitIcon unit={u} />
-          </li>
-        ))}
-      </ul>
+      <div className="flex flex-col justify-between self-stretch">
+        <ul className="flex gap-1">
+          {comp.traits
+            .sort((a, b) => b.style - a.style)
+            .map((trait) => (
+              <li key={trait.name}>
+                <TraitTag trait={trait} />
+              </li>
+            ))}
+        </ul>
+        <ul className="flex flex-row gap-2">
+          {comp.units.map((u, i) => (
+            <li key={i}>
+              <UnitIcon unit={u} />
+            </li>
+          ))}
+        </ul>
+      </div>
       <div
         className={
           "absolute right-0 flex h-full flex-col items-center justify-end bg-zinc-700 p-1"
@@ -88,23 +100,42 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
   );
 };
 
+const TraitTag: React.FC<{ trait: Trait }> = ({ trait }) => {
+  return (
+    <div
+      className={`flex flex-row flex-wrap items-center gap-1 rounded-full border border-zinc-950 bg-zinc-900 px-1 py-0.5 text-xs ${
+        trait.style == 1
+          ? "text-yellow-800"
+          : trait.style == 2
+          ? "text-slate-300"
+          : trait.style == 3
+          ? "text-yellow-500"
+          : "text-violet-400"
+      }`}
+    >
+      <TraitIcon trait={trait} className={"w-4"} />
+      <span>{trait.name.split("_")[1]}</span>
+    </div>
+  );
+};
+
 const UnitIcon: React.FC<{ unit: Unit }> = ({ unit }) => {
   return (
-    <div className="relative">
+    <div className="flex flex-col items-center">
       {/* unit star level */}
-      <div className="absolute bottom-full flex w-full flex-row justify-center text-sm">
+      <div className="flex flex-row text-sm">
         {unit.tier === 1 ? (
-          <AiFillStar className="text-zinc-300" />
+          <AiFillStar className="text-slate-300" />
         ) : unit.tier === 2 ? (
           <>
-            <AiFillStar className="text-zinc-300" />{" "}
-            <AiFillStar className="text-zinc-300" />
+            <AiFillStar className="text-slate-300" />
+            <AiFillStar className="text-slate-300" />
           </>
         ) : (
           <>
-            <AiFillStar className="text-yellow-400" />{" "}
-            <AiFillStar className="text-yellow-400" />{" "}
-            <AiFillStar className="text-yellow-400" />
+            <AiFillStar className="text-yellow-500" />
+            <AiFillStar className="text-yellow-500" />
+            <AiFillStar className="text-yellow-500" />
           </>
         )}
       </div>
@@ -129,7 +160,7 @@ const UnitIcon: React.FC<{ unit: Unit }> = ({ unit }) => {
       />
 
       {/* unit items */}
-      <ul className="absolute top-full flex w-full flex-row justify-center gap-[1px]">
+      <ul className="flex flex-row justify-center gap-[1px]">
         {unit.items.map((item, i) => (
           <li key={i}>
             <Image
