@@ -7,13 +7,22 @@ import {
 } from "~/util/stringFormatting";
 import Image from "next/image";
 import { AiFillStar } from "react-icons/ai";
+import { PiCaretDown } from "react-icons/pi";
 
 const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
   return (
     <div className="relative flex w-[1000px] flex-row items-center gap-6 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
       <div
-        className={`absolute left-0 top-0 h-full w-1 self-stretch ${
-          comp.placement <= 4 ? "bg-violet-500" : "bg-zinc-500"
+        className={`absolute left-0 h-full w-1 opacity-90 ${
+          comp.placement === 1
+            ? "bg-violet-500"
+            : comp.placement === 2
+            ? "bg-yellow-400"
+            : comp.placement === 3
+            ? "bg-zinc-300"
+            : comp.placement === 4
+            ? "bg-yellow-800"
+            : "bg-zinc-700"
         }`}
       />
       <div className="flex w-28 flex-col">
@@ -68,6 +77,13 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
           </li>
         ))}
       </ul>
+      <div
+        className={
+          "absolute right-0 flex h-full flex-col items-center justify-end bg-zinc-700 p-1"
+        }
+      >
+        <PiCaretDown className="text-base text-zinc-950" />
+      </div>
     </div>
   );
 };
