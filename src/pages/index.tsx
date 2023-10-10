@@ -2,10 +2,10 @@ import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
 import SummonerSearch from "../components/summonerSearch";
 import { env } from "~/env.mjs";
-import { Summoner, SummonerSchema } from "~/types/summoner";
+import { type Summoner, SummonerSchema } from "~/types/summoner";
 import ProfileSummaryCard from "~/components/profileSummaryCard";
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   const puuids = [
     "Uvx0KFVS5DrrvFAc52iU4MA17R3RbtEU7PoIC4vZbXparKFupxoDyCGXoVz-KSYWT0TnfyAQE9lAOw",
     "x0U9ERlX4M2QaHdpR522a_9g47NkI8ou-yZ7ec4qhNlsUkH4Nfypatq4yl0BTBStEDb9owLU2L5q3w",
