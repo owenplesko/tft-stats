@@ -43,6 +43,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const comps_url = `${env.NEXT_PUBLIC_BACKEND_URL}/comps/${summoner.data.puuid}`;
   const comps_res = await fetch(comps_url);
+
   if (!comps_res.ok) {
     return { props: { summoner: summoner.data, comps: [] } };
   }

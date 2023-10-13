@@ -73,13 +73,15 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
       </ul>
       <div className="flex flex-col justify-between self-stretch">
         <ul className="flex gap-1">
-          {comp.traits
-            .sort((a, b) => b.style - a.style)
-            .map((trait) => (
-              <li key={trait.name}>
-                <TraitTag trait={trait} />
-              </li>
-            ))}
+          {comp.traits // temp fix for go returning empty arrays as null
+            ? comp.traits
+                .sort((a, b) => b.style - a.style)
+                .map((trait) => (
+                  <li key={trait.name}>
+                    <TraitTag trait={trait} />
+                  </li>
+                ))
+            : null}
         </ul>
         <ul className="flex flex-row gap-2">
           {comp.units.map((u, i) => (

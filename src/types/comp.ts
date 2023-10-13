@@ -48,7 +48,7 @@ export const CompSchema = z.object({
   time_eliminated: z.number(),
   companion: z.number(),
   augments: z.array(z.string()),
-  traits: z.array(TraitSchema),
+  traits: z.array(TraitSchema).nullable(), // temp fix for go returning empty arrays as null
   units: z.array(UnitSchema),
 });
 
