@@ -20,15 +20,15 @@ const CompCard: React.FC<{ match: Match; summonerPuuid: string }> = ({
     queryKey: [`${match.id}/${summonerPuuid}`],
     queryFn: () =>
       fetch(
-        `https://tft-stats-comps.sfo2.digitaloceanspaces.com/${match.id}/${summonerPuuid}.json`,
+        `https://tft-stats-comps.sfo2.cdn.digitaloceanspaces.com/${match.id}/${summonerPuuid}.json`,
       )
         .then((res) => res.json())
         .then((data) => CompSchema.parse(data)),
   });
 
-  if (isLoading) return "Loading...";
+  if (isLoading) return "Loading... " + match.id;
 
-  if (isError) return "An error has occurred";
+  if (isError) return "An error has occurred " + match.id;
 
   return (
     <div className="relative flex w-[1000px] flex-row items-center gap-6 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
