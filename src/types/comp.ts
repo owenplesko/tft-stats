@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { InternalRegionSchema } from "./region";
 
 const TraitSchema = z.object({
   name: z.string(),
@@ -19,27 +18,7 @@ const UnitSchema = z.object({
 
 export type Unit = z.infer<typeof UnitSchema>;
 
-const ParticipantSchema = z.object({
-  region: InternalRegionSchema,
-  name: z.string(),
-});
-
-const QueueIdSchema = z.union([z.literal(1100), z.literal(1090)]);
-
-const MatchSchema = z.object({
-  id: z.string(),
-  date: z.number(),
-  game_length: z.number(),
-  game_version: z.string(),
-  queue_id: QueueIdSchema,
-  game_type: z.string(),
-  set_name: z.string(),
-  set_number: z.number(),
-  participants: z.array(ParticipantSchema),
-});
-
 export const CompSchema = z.object({
-  match: MatchSchema,
   placement: z.number(),
   last_round: z.number(),
   level: z.number(),

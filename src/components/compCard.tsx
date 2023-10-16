@@ -1,65 +1,84 @@
-import type { Comp, Trait, Unit } from "~/types/comp";
+import { CompSchema, type Trait, type Unit } from "~/types/comp";
 import {
   formatDuration,
   formatPlacement,
   formatStageNumber,
   formatTimeAgo,
 } from "~/util/stringFormatting";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { AiFillStar } from "react-icons/ai";
 import { PiCaretDown } from "react-icons/pi";
 import TraitIcon from "./TraitIcon";
+import { type Match } from "~/types/match";
 
-const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
+const CompCard: React.FC<{ match: Match; summonerPuuid: string }> = ({
+  match,
+  summonerPuuid,
+}) => {
+  const { isLoading, data, isError } = useQuery({
+    queryKey: [`${match.id}/${summonerPuuid}`],
+    queryFn: () =>
+      fetch(
+        `https://tft-stats-comps.sfo2.digitaloceanspaces.com/${match.id}/${summonerPuuid}.json`,
+      )
+        .then((res) => res.json())
+        .then((data) => CompSchema.parse(data)),
+  });
+
+  if (isLoading) return "Loading...";
+
+  if (isError) return "An error has occurred";
+
   return (
     <div className="relative flex w-[1000px] flex-row items-center gap-6 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
       <div
         className={`absolute left-0 h-full w-1 opacity-90 ${
-          comp.placement === 1
+          data.placement === 1
             ? "bg-violet-500"
-            : comp.placement === 2
+            : data.placement === 2
             ? "bg-yellow-400"
-            : comp.placement === 3
+            : data.placement === 3
             ? "bg-slate-300"
-            : comp.placement === 4
+            : data.placement === 4
             ? "bg-yellow-800"
             : "bg-zinc-700"
         }`}
       />
       <div className="flex w-28 flex-col">
         <span className="text-xl font-medium text-zinc-300">
-          {formatPlacement(comp.placement)}
+          {formatPlacement(data.placement)}
         </span>
         <span className="text-lg font-normal text-zinc-300">
-          {comp.match.queue_id === 1100 ? "Ranked" : "Normal"}
+          {match.queue_id === 1100 ? "Ranked" : "Normal"}
         </span>
         <span
           className="text-sm font-normal text-zinc-400"
           suppressHydrationWarning={true}
         >
-          {formatTimeAgo(comp.match.date / 1000)}
+          {formatTimeAgo(match.date / 1000)}
         </span>
         <span className="text-sm font-normal text-zinc-400">
-          {formatStageNumber(comp.last_round)}
+          {formatStageNumber(data.last_round)}
         </span>
         <span className="text-sm font-normal text-zinc-400">
-          {formatDuration(comp.time_eliminated)}
+          {formatDuration(data.time_eliminated)}
         </span>
       </div>
       <div className="relative">
         <Image
           className="rounded-full border border-zinc-950"
-          src={`/companion/${comp.companion}.png`}
+          src={`/companion/${data.companion}.png`}
           width={48}
           height={48}
-          alt={`companion/${comp.companion}.png`}
+          alt={`companion/${data.companion}.png`}
         />
         <span className="absolute bottom-0 right-0 rounded-full bg-zinc-900 px-2 py-1 text-xs text-zinc-300">
-          {comp.level}
+          {data.level}
         </span>
       </div>
       <ul className="flex flex-col justify-between self-stretch">
-        {comp.augments.map((augment) => (
+        {data.augments.map((augment) => (
           <li key={augment}>
             <Image
               className="rounded-sm border border-zinc-900"
@@ -73,8 +92,8 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
       </ul>
       <div className="flex flex-col justify-between self-stretch">
         <ul className="flex gap-1">
-          {comp.traits // temp fix for go returning empty arrays as null
-            ? comp.traits
+          {data.traits // temp fix for go returning empty arrays as null
+            ? data.traits
                 .sort((a, b) => b.style - a.style)
                 .map((trait) => (
                   <li key={trait.name}>
@@ -84,7 +103,7 @@ const CompCard: React.FC<{ comp: Comp }> = ({ comp }) => {
             : null}
         </ul>
         <ul className="flex flex-row gap-2">
-          {comp.units.map((u, i) => (
+          {data.units.map((u, i) => (
             <li key={i}>
               <UnitIcon unit={u} />
             </li>

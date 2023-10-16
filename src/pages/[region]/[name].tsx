@@ -7,8 +7,8 @@ import { RegionSchema, regionToInternalRegion } from "~/types/region";
 import { type Summoner, SummonerSchema } from "~/types/summoner";
 import ProfileHeader from "~/components/profileHeader";
 import RankCard from "~/components/rankCard";
-import { type Comp, CompSchema } from "~/types/comp";
 import CompCard from "~/components/compCard";
+import { type Match, MatchSchema } from "~/types/match";
 
 const QuerySchema = z.object({
   region: RegionSchema,
@@ -41,24 +41,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const comps_url = `${env.NEXT_PUBLIC_BACKEND_URL}/comps/${summoner.data.puuid}`;
-  const comps_res = await fetch(comps_url);
+  const matches_url = `${env.NEXT_PUBLIC_BACKEND_URL}/matches/${summoner.data.puuid}`;
+  const matches_res = await fetch(matches_url);
 
-  if (!comps_res.ok) {
-    return { props: { summoner: summoner.data, comps: [] } };
+  if (!matches_res.ok) {
+    return { props: { summoner: summoner.data, matches: [] } };
   }
 
-  const comps = z.array(CompSchema).safeParse(await comps_res.json());
-  if (!comps.success) {
-    return { props: { summoner: summoner.data, comps: [] } };
+  const matches = z.array(MatchSchema).safeParse(await matches_res.json());
+  if (!matches.success) {
+    return { props: { summoner: summoner.data, matches: [] } };
   }
 
-  return { props: { summoner: summoner.data, comps: comps.data } };
+  return { props: { summoner: summoner.data, matches: matches.data } };
 };
 
-const ProfilePage: NextPage<{ summoner: Summoner; comps: Comp[] }> = ({
+const ProfilePage: NextPage<{ summoner: Summoner; matches: Match[] }> = ({
   summoner,
-  comps,
+  matches,
 }) => {
   return (
     <>
@@ -77,9 +77,9 @@ const ProfilePage: NextPage<{ summoner: Summoner; comps: Comp[] }> = ({
           <div className="col-span-3 rounded-sm border border-zinc-950 bg-zinc-800 p-4" />
         </div>
         <ul className="flex flex-col gap-2">
-          {comps.map((c) => (
-            <li key={c.match.id}>
-              <CompCard comp={c} />
+          {matches.map((m) => (
+            <li key={m.id}>
+              <CompCard match={m} summonerPuuid={summoner.puuid} />
             </li>
           ))}
         </ul>
