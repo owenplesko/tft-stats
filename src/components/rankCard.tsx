@@ -44,12 +44,13 @@ const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
       ) : (
         <>
           <Image
+            className="mr-auto"
             src={`/rank/unranked.png`}
             width={96}
             height={96}
             alt="unranked"
           />
-          <span className="py-2 text-lg font-medium text-zinc-300">
+          <span className="mr-auto py-2 text-lg font-medium text-zinc-300">
             Unranked
           </span>
         </>

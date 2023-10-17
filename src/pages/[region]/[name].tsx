@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { useQuery } from "@tanstack/react-query";
 import type { GetServerSideProps, NextPage } from "next/types";
 import { z } from "zod";
 import SummonerSearch from "~/components/summonerSearch";
@@ -8,7 +9,7 @@ import { type Summoner, SummonerSchema } from "~/types/summoner";
 import ProfileHeader from "~/components/profileHeader";
 import RankCard from "~/components/rankCard";
 import CompCard from "~/components/compCard";
-import { type Match, MatchSchema } from "~/types/match";
+import { MatchSchema } from "~/types/match";
 
 const QuerySchema = z.object({
   region: RegionSchema,
@@ -41,25 +42,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const matches_url = `${env.NEXT_PUBLIC_BACKEND_URL}/matches/${summoner.data.puuid}`;
-  const matches_res = await fetch(matches_url);
-
-  if (!matches_res.ok) {
-    return { props: { summoner: summoner.data, matches: [] } };
-  }
-
-  const matches = z.array(MatchSchema).safeParse(await matches_res.json());
-  if (!matches.success) {
-    return { props: { summoner: summoner.data, matches: [] } };
-  }
-
-  return { props: { summoner: summoner.data, matches: matches.data } };
+  return { props: { summoner: summoner.data } };
 };
 
-const ProfilePage: NextPage<{ summoner: Summoner; matches: Match[] }> = ({
-  summoner,
-  matches,
-}) => {
+const ProfilePage: NextPage<{ summoner: Summoner }> = ({ summoner }) => {
+  const matchesQuery = useQuery({
+    queryKey: [`matches/${summoner.puuid}`],
+    queryFn: () =>
+      fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/matches/${summoner.puuid}`)
+        .then((res) => res.json())
+        .then((data) => z.array(MatchSchema).parse(data)),
+  });
+
   return (
     <>
       <Head>
@@ -76,13 +70,15 @@ const ProfilePage: NextPage<{ summoner: Summoner; matches: Match[] }> = ({
           <RankCard summoner_puuid={summoner.puuid} />
           <div className="col-span-3 rounded-sm border border-zinc-950 bg-zinc-800 p-4" />
         </div>
-        <ul className="flex flex-col gap-2">
-          {matches.map((m) => (
-            <li key={m.id}>
-              <CompCard match={m} summonerPuuid={summoner.puuid} />
-            </li>
-          ))}
-        </ul>
+        {matchesQuery.isSuccess ? (
+          <ul className="flex flex-col gap-2">
+            {matchesQuery.data.map((m) => (
+              <li key={m.id}>
+                <CompCard match={m} summonerPuuid={summoner.puuid} />
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </main>
     </>
   );

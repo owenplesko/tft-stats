@@ -24,7 +24,7 @@ export const formatStageNumber = (rounds: number) => {
     const stage = Math.floor((rounds - 4) / 7) + 2;
     const round = (rounds - 4) % 7;
 
-    return `Stage ${stage}-${round}`;
+    return `${stage}-${round}`;
 }
 
 export const formatDuration = (unixDuration: number) => {
