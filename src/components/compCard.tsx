@@ -16,7 +16,7 @@ const CompCard: React.FC<{ match: Match; summonerPuuid: string }> = ({
   match,
   summonerPuuid,
 }) => {
-  const { isLoading, data, isError } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: [`${match.id}/${summonerPuuid}`],
     queryFn: () =>
       fetch(
@@ -26,99 +26,96 @@ const CompCard: React.FC<{ match: Match; summonerPuuid: string }> = ({
         .then((data) => CompSchema.parse(data)),
   });
 
-  if (isLoading) return "Loading... " + match.id;
-
-  if (isError) return "An error has occurred " + match.id;
-
-  return (
-    <div className="relative flex w-[1000px] flex-row items-center gap-6 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
-      <div
-        className={`absolute left-0 h-full w-1 opacity-90 ${
-          data.placement === 1
-            ? "bg-violet-500"
-            : data.placement === 2
-            ? "bg-yellow-400"
-            : data.placement === 3
-            ? "bg-slate-300"
-            : data.placement === 4
-            ? "bg-yellow-800"
-            : "bg-zinc-700"
-        }`}
-      />
-      <div className="flex w-28 flex-col">
-        <span className="text-xl font-medium text-zinc-300">
-          {formatPlacement(data.placement)}
-        </span>
-        <span className="text-lg font-normal text-zinc-300">
-          {match.queue_id === 1100 ? "Ranked" : "Normal"}
-        </span>
-        <span
-          className="text-sm font-normal text-zinc-400"
-          suppressHydrationWarning={true}
-        >
-          {formatTimeAgo(match.date / 1000)}
-        </span>
-        <span className="text-sm font-normal text-zinc-400">
-          {formatStageNumber(data.last_round)}
-        </span>
-        <span className="text-sm font-normal text-zinc-400">
-          {formatDuration(data.time_eliminated)}
-        </span>
-      </div>
-      <div className="relative">
-        <Image
-          className="rounded-full border border-zinc-950"
-          src={`/companion/${data.companion}.png`}
-          width={48}
-          height={48}
-          alt={`companion/${data.companion}.png`}
+  if (isSuccess)
+    return (
+      <div className="relative flex w-[1000px] flex-row items-center gap-6 rounded-sm border border-zinc-950 bg-zinc-800 px-5 py-4">
+        <div
+          className={`absolute left-0 h-full w-1 opacity-90 ${
+            data.placement === 1
+              ? "bg-violet-500"
+              : data.placement === 2
+              ? "bg-yellow-400"
+              : data.placement === 3
+              ? "bg-slate-300"
+              : data.placement === 4
+              ? "bg-yellow-800"
+              : "bg-zinc-700"
+          }`}
         />
-        <span className="absolute bottom-0 right-0 rounded-full bg-zinc-900 px-2 py-1 text-xs text-zinc-300">
-          {data.level}
-        </span>
-      </div>
-      <ul className="flex flex-col justify-between self-stretch">
-        {data.augments.map((augment) => (
-          <li key={augment}>
-            <Image
-              className="rounded-sm border border-zinc-900"
-              src={`/augment/${augment}.png`}
-              width={32}
-              height={32}
-              alt={augment}
-            />
-          </li>
-        ))}
-      </ul>
-      <div className="flex flex-col justify-between self-stretch">
-        <ul className="flex gap-1">
-          {data.traits // temp fix for go returning empty arrays as null
-            ? data.traits
-                .sort((a, b) => b.style - a.style)
-                .map((trait) => (
-                  <li key={trait.name}>
-                    <TraitTag trait={trait} />
-                  </li>
-                ))
-            : null}
-        </ul>
-        <ul className="flex flex-row gap-2">
-          {data.units.map((u, i) => (
-            <li key={i}>
-              <UnitIcon unit={u} />
+        <div className="flex w-28 flex-col">
+          <span className="text-xl font-medium text-zinc-300">
+            {formatPlacement(data.placement)}
+          </span>
+          <span className="text-lg font-normal text-zinc-300">
+            {match.queue_id === 1100 ? "Ranked" : "Normal"}
+          </span>
+          <span
+            className="text-sm font-normal text-zinc-400"
+            suppressHydrationWarning={true}
+          >
+            {formatTimeAgo(match.date / 1000)}
+          </span>
+          <span className="text-sm font-normal text-zinc-400">
+            {formatStageNumber(data.last_round)}
+          </span>
+          <span className="text-sm font-normal text-zinc-400">
+            {formatDuration(data.time_eliminated)}
+          </span>
+        </div>
+        <div className="relative">
+          <Image
+            className="rounded-full border border-zinc-950"
+            src={`/companion/${data.companion}.png`}
+            width={48}
+            height={48}
+            alt={`companion/${data.companion}.png`}
+          />
+          <span className="absolute bottom-0 right-0 rounded-full bg-zinc-900 px-2 py-1 text-xs text-zinc-300">
+            {data.level}
+          </span>
+        </div>
+        <ul className="flex flex-col justify-between self-stretch">
+          {data.augments.map((augment) => (
+            <li key={augment}>
+              <Image
+                className="rounded-sm border border-zinc-900"
+                src={`/augment/${augment}.png`}
+                width={32}
+                height={32}
+                alt={augment}
+              />
             </li>
           ))}
         </ul>
+        <div className="flex flex-col justify-between self-stretch">
+          <ul className="flex flex-wrap gap-1">
+            {data.traits // temp fix for go returning empty arrays as null
+              ? data.traits
+                  .sort((a, b) => b.style - a.style)
+                  .map((trait) => (
+                    <li key={trait.name}>
+                      <TraitTag trait={trait} />
+                    </li>
+                  ))
+              : null}
+          </ul>
+          <ul className="flex flex-row gap-2">
+            {data.units.map((u, i) => (
+              <li key={i}>
+                <UnitIcon unit={u} />
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div
+          className={
+            "absolute right-0 flex h-full flex-col items-center justify-end bg-zinc-700 p-1"
+          }
+        >
+          <PiCaretDown className="text-base text-zinc-950" />
+        </div>
       </div>
-      <div
-        className={
-          "absolute right-0 flex h-full flex-col items-center justify-end bg-zinc-700 p-1"
-        }
-      >
-        <PiCaretDown className="text-base text-zinc-950" />
-      </div>
-    </div>
-  );
+    );
 };
 
 const TraitTag: React.FC<{ trait: Trait }> = ({ trait }) => {

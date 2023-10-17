@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { InternalRegionSchema } from "./region";
-import { RankSchema } from "./rank";
 
 export const SummonerSchema = z.object({
     puuid: z.string(),
@@ -9,7 +8,6 @@ export const SummonerSchema = z.object({
     profileIconId: z.number(),
     summonerLevel: z.number(),
     lastUpdated: z.number(),
-    rank: RankSchema.nullable(),
 });
 
 export type Summoner = z.infer<typeof SummonerSchema>

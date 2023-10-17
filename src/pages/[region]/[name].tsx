@@ -73,7 +73,7 @@ const ProfilePage: NextPage<{ summoner: Summoner; matches: Match[] }> = ({
         </div>
         <div className="grid w-[1000px] grid-cols-5 gap-2">
           <ProfileHeader summoner={summoner} />
-          <RankCard rank={summoner.rank} />
+          <RankCard summoner_puuid={summoner.puuid} />
           <div className="col-span-3 rounded-sm border border-zinc-950 bg-zinc-800 p-4" />
         </div>
         <ul className="flex flex-col gap-2">

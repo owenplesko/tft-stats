@@ -1,34 +1,44 @@
 import Image from "next/image";
-import type { Rank } from "~/types/rank";
+import { RankSchema } from "~/types/rank";
+import { useQuery } from "@tanstack/react-query";
 import { formatRank } from "~/util/stringFormatting";
+import { env } from "~/env.mjs";
+import { MatchStatsSchema } from "~/types/stats";
 
-const RankCard: React.FC<{ rank: Rank | null }> = ({ rank }) => {
+const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
+  const rankQuery = useQuery({
+    queryKey: [`rank/${summoner_puuid}`],
+    queryFn: () =>
+      fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/rank/${summoner_puuid}`)
+        .then((res) => res.json())
+        .then((data) => RankSchema.parse(data)),
+  });
+
+  const matchStatsQuery = useQuery({
+    queryKey: [`matches/stats/${summoner_puuid}`],
+    queryFn: () =>
+      fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/matches/stats/${summoner_puuid}`)
+        .then((res) => res.json())
+        .then((data) => MatchStatsSchema.parse(data)),
+  });
+
   return (
     <div className="col-span-2 flex flex-row rounded-sm border border-zinc-950 bg-zinc-800 p-4">
-      {rank ? (
+      {rankQuery.isSuccess ? (
         <>
           <Image
             className="mr-auto"
-            src={`/rank/${rank.tier.toLowerCase()}.png`}
+            src={`/rank/${rankQuery.data.tier.toLowerCase()}.png`}
             width={96}
             height={96}
-            alt={rank.tier}
+            alt={rankQuery.data.tier}
           />
           <div className="mr-auto flex flex-col gap-2 py-2">
             <span className="text-lg font-medium text-zinc-300">
-              {formatRank(rank.tier, rank.division)}
+              {formatRank(rankQuery.data.tier, rankQuery.data.division)}
             </span>
-            <span className="text-sm font-normal text-zinc-400">{`${rank.lp} LP`}</span>
-            <span className="text-sm font-normal text-zinc-400">Top 0.69%</span>
-          </div>
-          <div className="mr-auto flex flex-col gap-2 py-2">
-            <span className="text-lg font-medium text-zinc-300">
-              189 Played
-            </span>
-            <span className="text-sm font-normal text-zinc-400">
-              Win Rate 52.1%
-            </span>
-            <span className="text-sm font-normal text-zinc-400">4.34 Avg</span>
+            <span className="text-sm font-normal text-zinc-400">{`${rankQuery.data.lp} LP`}</span>
+            <span className="text-sm font-normal text-zinc-400">Top 0.2%</span>
           </div>
         </>
       ) : (
@@ -44,6 +54,18 @@ const RankCard: React.FC<{ rank: Rank | null }> = ({ rank }) => {
           </span>
         </>
       )}
+
+      {matchStatsQuery.isSuccess ? (
+        <div className="mr-auto flex flex-col gap-2 py-2">
+          <span className="text-lg font-medium text-zinc-300">{`${matchStatsQuery.data.total_games} Played`}</span>
+          <span className="text-sm font-normal text-zinc-400">
+            {`Win Rate ${matchStatsQuery.data.top_4_rate.toFixed(2)}%`}
+          </span>
+          <span className="text-sm font-normal text-zinc-400">{`${matchStatsQuery.data.average_placement.toFixed(
+            2,
+          )} Avg`}</span>
+        </div>
+      ) : null}
     </div>
   );
 };

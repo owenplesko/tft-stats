@@ -1,11 +1,9 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 import SummonerSearch from "../components/summonerSearch";
-import { env } from "~/env.mjs";
-import { type Summoner, SummonerSchema } from "~/types/summoner";
 import ProfileSummaryCard from "~/components/profileSummaryCard";
 
-export const getServerSideProps: GetServerSideProps = async () => {
+const Home: NextPage = () => {
   const puuids = [
     "Uvx0KFVS5DrrvFAc52iU4MA17R3RbtEU7PoIC4vZbXparKFupxoDyCGXoVz-KSYWT0TnfyAQE9lAOw",
     "x0U9ERlX4M2QaHdpR522a_9g47NkI8ou-yZ7ec4qhNlsUkH4Nfypatq4yl0BTBStEDb9owLU2L5q3w",
@@ -13,32 +11,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     "JgnblmPcwrZP6Mrj2tToHJVCo_1Q99G_qpN5MjAbt3wgsiD6jtBfsnfX7r0qcO6o9EuSYn0JNPWZnw",
   ];
 
-  const promises = [];
-  const summoners = [];
-
-  for (const puuid of puuids) {
-    const summoner_url = `${env.NEXT_PUBLIC_BACKEND_URL}/summoner/${puuid}`;
-    promises.push(fetch(summoner_url));
-  }
-
-  const responses = await Promise.all(promises);
-  for (const summoner_res of responses) {
-    if (!summoner_res.ok) {
-      continue;
-    }
-
-    const summoner = SummonerSchema.safeParse(await summoner_res.json());
-    if (!summoner.success) {
-      continue;
-    }
-
-    summoners.push(summoner.data);
-  }
-
-  return { props: { summoners: summoners } };
-};
-
-const Home: NextPage<{ summoners: Summoner[] }> = ({ summoners }) => {
   return (
     <>
       <Head>
@@ -51,9 +23,9 @@ const Home: NextPage<{ summoners: Summoner[] }> = ({ summoners }) => {
           <SummonerSearch />
         </div>
         <ul className="grid grid-cols-3 gap-4">
-          {summoners.map((s) => (
-            <li key={s.puuid}>
-              <ProfileSummaryCard summoner={s} />
+          {puuids.map((puuid) => (
+            <li key={puuid}>
+              <ProfileSummaryCard summoner_puuid={puuid} />
             </li>
           ))}
         </ul>
