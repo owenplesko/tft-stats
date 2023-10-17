@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const QueueIdSchema = z.union([z.literal(1100), z.literal(1090)]);
+const QueueIdSchema = z.union([z.literal(1100), z.literal(1090), z.literal(1160)]);
 
 export const MatchSchema = z.object({
     id: z.string(),

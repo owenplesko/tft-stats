@@ -2,6 +2,7 @@ import { CompSchema, type Trait } from "~/types/comp";
 import {
   formatDuration,
   formatPlacement,
+  formatQueueId,
   formatStageNumber,
   formatTimeAgo,
 } from "~/util/stringFormatting";
@@ -52,7 +53,7 @@ const CompCard: React.FC<{ match: Match; summonerPuuid: string }> = ({
               {formatPlacement(data.placement)}
             </span>
             <span className="text-lg font-normal text-zinc-300">
-              {match.queue_id === 1100 ? "Ranked" : "Normal"}
+              {formatQueueId(match.queue_id)}
             </span>
             <span
               className="text-sm font-normal text-zinc-400"

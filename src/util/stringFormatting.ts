@@ -53,6 +53,17 @@ export const formatPlacement = (placement: number) => {
     return `${placement}th`
 }
 
+export const formatQueueId = (queue_id: number) => {
+  if(queue_id === 1100)
+    return "Ranked" 
+  else if(queue_id === 1090)
+    return  "Normal"
+  else if(queue_id === 1160)
+    return "Double Up"
+
+  return queue_id.toString()
+}
+
 export const formatRank = (tier: string, division: string) => {
     if(tier === "CHALLENGER" || tier === "GRANDMASTER" || tier == "MASTER") {
         return tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase()
