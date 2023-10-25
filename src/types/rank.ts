@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export const RankSchema = z.object({
-    type: z.string(),
     tier: z.string(),
     division: z.string(),
     lp: z.number(),
