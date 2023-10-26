@@ -3,7 +3,7 @@ import { RankSchema } from "~/types/rank";
 import { useQuery } from "@tanstack/react-query";
 import { formatRank } from "~/util/stringFormatting";
 import { env } from "~/env.mjs";
-import { MatchStatsSchema } from "~/types/stats";
+import { RankStatsSchema } from "~/types/stats";
 
 const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
   const rankQuery = useQuery({
@@ -14,12 +14,12 @@ const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
         .then((data) => RankSchema.parse(data)),
   });
 
-  const matchStatsQuery = useQuery({
+  const rankStatsQuery = useQuery({
     queryKey: [`rank/stats/${summoner_puuid}`],
     queryFn: () =>
       fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/rank/stats/${summoner_puuid}`)
         .then((res) => res.json())
-        .then((data) => MatchStatsSchema.parse(data)),
+        .then((data) => RankStatsSchema.parse(data)),
   });
 
   return (
@@ -56,13 +56,13 @@ const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
         </>
       )}
 
-      {matchStatsQuery.isSuccess ? (
+      {rankStatsQuery.isSuccess ? (
         <div className="mr-auto flex flex-col gap-2 py-2">
-          <span className="text-lg font-medium text-zinc-300">{`${matchStatsQuery.data.total_games} Played`}</span>
+          <span className="text-lg font-medium text-zinc-300">{`${rankStatsQuery.data.total_games} Played`}</span>
           <span className="text-sm font-normal text-zinc-400">
-            {`Win Rate ${matchStatsQuery.data.top_4_rate.toFixed(2)}%`}
+            {`Win Rate ${rankStatsQuery.data.top_4_rate.toFixed(2)}%`}
           </span>
-          <span className="text-sm font-normal text-zinc-400">{`${matchStatsQuery.data.average_placement.toFixed(
+          <span className="text-sm font-normal text-zinc-400">{`${rankStatsQuery.data.average_placement.toFixed(
             2,
           )} Avg`}</span>
         </div>
