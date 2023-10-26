@@ -15,9 +15,9 @@ const RankCard: React.FC<{ summoner_puuid: string }> = ({ summoner_puuid }) => {
   });
 
   const matchStatsQuery = useQuery({
-    queryKey: [`matches/stats/${summoner_puuid}`],
+    queryKey: [`rank/stats/${summoner_puuid}`],
     queryFn: () =>
-      fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/matches/stats/${summoner_puuid}`)
+      fetch(`${env.NEXT_PUBLIC_BACKEND_URL}/rank/stats/${summoner_puuid}`)
         .then((res) => res.json())
         .then((data) => MatchStatsSchema.parse(data)),
   });
