@@ -4,8 +4,8 @@ export const formatTimeAgo = (unixTimestamp: number): string => {
     const timeDifference = currentTime - unixTimestamp;
   
     if (timeDifference < 60) {
-      return `${timeDifference} second${timeDifference === 1 ? "" : "s"} ago`;
-    } else if (Math.floor(timeDifference) < 3600) {
+      return `${Math.floor(timeDifference)} second${timeDifference === 1 ? "" : "s"} ago`;
+    } else if (timeDifference < 3600) {
       const minutes = Math.floor(timeDifference / 60);
       return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
     } else if (timeDifference < 86400) {
